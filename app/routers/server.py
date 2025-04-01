@@ -1,20 +1,22 @@
 from typing import Annotated
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, Path
 import a2s
 
 from app.internal.handle_a2s import handle_a2s_response
 
 router = APIRouter()
 
-@router.get("/server/rules/{server_ip}/")
+@router.get("/server/rules/{server_ip}/", tags=["rules"])
 @handle_a2s_response
-def get_server_rules(server_ip: str, server_port: Annotated[int, Query(gt=0, le=65535)] = 27015):
+def get_server_rules(server_ip: Annotated[str, Path(title="Server IP", description="IP or hostname of the server.")],
+                     server_port: Annotated[int, Query(gt=0, le=65535, title="Server Port", description="Port of the server.")] = 27015):
     server_address = (server_ip, server_port)
     return a2s.rules(server_address)
 
-@router.get("/server/info/{server_ip}/")
+@router.get("/server/info/{server_ip}/", tags=["info"])
 @handle_a2s_response
-def get_server_info(server_ip: str, server_port: Annotated[int, Query(gt=0, le=65535)] = 27015):
+def get_server_info(server_ip: Annotated[str, Path(title="Server IP", description="IP or hostname of the server.")],
+                    server_port: Annotated[int, Query(gt=0, le=65535, title="Server Port", description="Port of the server.")] = 27015):
     server_address = (server_ip, server_port)
     server_info_raw = a2s.info(server_address)
     server_info = {
@@ -31,7 +33,7 @@ def get_server_info(server_ip: str, server_port: Annotated[int, Query(gt=0, le=6
         "platform": server_info_raw.platform,
         "password": server_info_raw.password_protected,
         "vac": server_info_raw.vac_enabled,
-        "time": server_info_raw.ping
+        "time": server_info_raw.ping,
     }
 
     if server_info_raw.keywords:
@@ -56,9 +58,10 @@ def get_server_info(server_ip: str, server_port: Annotated[int, Query(gt=0, le=6
 
     return server_info
 
-@router.get("/server/players/{server_ip}/")
+@router.get("/server/players/{server_ip}/", tags=["players"])
 @handle_a2s_response
-def get_server_players(server_ip: str, server_port: Annotated[int, Query(gt=0, le=65535)] = 27015):
+def get_server_players(server_ip: Annotated[str, Path(title="Server IP", description="IP or hostname of the server.")],
+                       server_port: Annotated[int, Query(gt=0, le=65535, title="Server Port", description="Port of the server.")] = 27015):
     server_address = (server_ip, server_port)
     server_players_raw = a2s.players(server_address)
     server_players = []
