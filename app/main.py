@@ -12,7 +12,7 @@ Functions:
 tags_metadata = [
     {
         "name": "rules",
-        "description": "Fetch the rules of a server. This would be every cvar with the [FCVAR_NOTIFY](https://developer.valvesoftware.com/wiki/FCVAR_NOTIFY)",
+        "description": "Fetch the rules of a server. This would be every cvar with the [FCVAR_NOTIFY](https://developer.valvesoftware.com/wiki/FCVAR_NOTIFY) flag.",
     },
     {
         "name": "info",
