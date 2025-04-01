@@ -1,8 +1,46 @@
-from typing import Annotated
+from typing import Annotated, NotRequired, TypedDict
 from fastapi import APIRouter, Query, Path
+from pydantic import BaseModel
 import a2s
 
 from app.internal.handle_a2s import handle_a2s_response
+
+class info_response(TypedDict):
+    protocol: int
+    version: str
+    name: str
+    map: str
+    folder: str
+    game: str
+    player_count: int
+    max_players: int
+    bot_count: int
+    server_type: str
+    platform: str
+    password: bool
+    vac: bool
+    ping: float
+    tags: NotRequired[list[str]]
+    appid: NotRequired[int]
+    edf: NotRequired[int]
+    port: NotRequired[int]
+    steam_id: NotRequired[int]
+    stv_port: NotRequired[int]
+    stv_name: NotRequired[str]
+    gameid: NotRequired[int]
+    address: NotRequired[str]
+    is_mod: NotRequired[bool]
+    mod_website: NotRequired[str]
+    mod_download: NotRequired[str]
+    mod_version: NotRequired[int]
+    mod_size: NotRequired[int]
+    multiplayer_only: NotRequired[bool]
+    uses_custom_dll: NotRequired[bool]
+
+class player_list_item(BaseModel):
+    index: int
+    name: str
+    time: float
 
 router = APIRouter()
 
@@ -13,7 +51,7 @@ def get_server_rules(server_ip: Annotated[str, Path(title="Server IP", descripti
     server_address = (server_ip, server_port)
     return a2s.rules(server_address)
 
-@router.get("/server/info/{server_ip}/", tags=["info"])
+@router.get("/server/info/{server_ip}/", tags=["info"], response_model=info_response)
 @handle_a2s_response
 def get_server_info(server_ip: Annotated[str, Path(title="Server IP", description="IP or hostname of the server.")],
                     server_port: Annotated[int, Query(gt=0, le=65535, title="Server Port", description="Port of the server.")] = 27015):
@@ -33,7 +71,7 @@ def get_server_info(server_ip: Annotated[str, Path(title="Server IP", descriptio
         "platform": server_info_raw.platform,
         "password": server_info_raw.password_protected,
         "vac": server_info_raw.vac_enabled,
-        "time": server_info_raw.ping,
+        "ping": server_info_raw.ping,
     }
 
     if server_info_raw.keywords:
@@ -58,7 +96,7 @@ def get_server_info(server_ip: Annotated[str, Path(title="Server IP", descriptio
 
     return server_info
 
-@router.get("/server/players/{server_ip}/", tags=["players"])
+@router.get("/server/players/{server_ip}/", tags=["players"], response_model=list[player_list_item])
 @handle_a2s_response
 def get_server_players(server_ip: Annotated[str, Path(title="Server IP", description="IP or hostname of the server.")],
                        server_port: Annotated[int, Query(gt=0, le=65535, title="Server Port", description="Port of the server.")] = 27015):
