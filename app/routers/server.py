@@ -40,6 +40,7 @@ class info_response(TypedDict):
 class player_list_item(BaseModel):
     index: int
     name: str
+    score: int
     time: float
 
 router = APIRouter()
@@ -104,6 +105,6 @@ def get_server_players(server_ip: Annotated[str, Path(title="Server IP", descrip
     server_players_raw = a2s.players(server_address)
     server_players = []
     for item in server_players_raw:
-        player = {"index": item.index, "name": item.name, "time": item.duration}
+        player = {"index": item.index, "name": item.name, "score": item.score, "time": item.duration}
         server_players.append(player)
     return server_players
