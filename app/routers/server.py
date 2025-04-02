@@ -45,17 +45,22 @@ class player_list_item(BaseModel):
 
 router = APIRouter()
 
-@router.get("/server/rules/{server_ip}/", tags=["rules"])
+@router.get("/server/rules/{server_ip}/", name="Fetch Server Rules", tags=["server"])
 @handle_a2s_response
 def get_server_rules(server_ip: Annotated[str, Path(title="Server IP", description="IP or hostname of the server.")],
-                     server_port: Annotated[int, Query(gt=0, le=65535, title="Server Port", description="Port of the server.")] = 27015):
+                     server_port: Annotated[int, Query(gt=0, le=65535, title="Server Port", description="Port of the server.")] = 27015) -> dict:
+    """
+    Fetch the rules of a server. This would be every cvar with the 
+    [FCVAR_NOTIFY](https://developer.valvesoftware.com/wiki/FCVAR_NOTIFY) flag.
+    """
     server_address = (server_ip, server_port)
     return a2s.rules(server_address)
 
-@router.get("/server/info/{server_ip}/", tags=["info"], response_model=info_response)
+@router.get("/server/info/{server_ip}/", name="Fetch Server Info", tags=["server"], response_model=info_response)
 @handle_a2s_response
 def get_server_info(server_ip: Annotated[str, Path(title="Server IP", description="IP or hostname of the server.")],
-                    server_port: Annotated[int, Query(gt=0, le=65535, title="Server Port", description="Port of the server.")] = 27015):
+                    server_port: Annotated[int, Query(gt=0, le=65535, title="Server Port", description="Port of the server.")] = 27015) -> dict:
+    """Fetch information about a server."""
     server_address = (server_ip, server_port)
     server_info_raw = a2s.info(server_address)
     server_info = {
@@ -97,10 +102,11 @@ def get_server_info(server_ip: Annotated[str, Path(title="Server IP", descriptio
 
     return server_info
 
-@router.get("/server/players/{server_ip}/", tags=["players"], response_model=list[player_list_item])
+@router.get("/server/players/{server_ip}/", name="Fetch Player List", tags=["server"], response_model=list[player_list_item])
 @handle_a2s_response
 def get_server_players(server_ip: Annotated[str, Path(title="Server IP", description="IP or hostname of the server.")],
-                       server_port: Annotated[int, Query(gt=0, le=65535, title="Server Port", description="Port of the server.")] = 27015):
+                       server_port: Annotated[int, Query(gt=0, le=65535, title="Server Port", description="Port of the server.")] = 27015) -> list:
+    """Fetch a list of players on a server."""
     server_address = (server_ip, server_port)
     server_players_raw = a2s.players(server_address)
     server_players = []

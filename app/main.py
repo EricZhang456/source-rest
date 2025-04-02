@@ -4,23 +4,15 @@ from .routers import server
 
 description = """
 Functions:
-* Get Server Info
-* Get Server Rules
-* Get Players in a Server
+* Fetch Server Info
+* Fetch Server Rules
+* Fetch Players in a Server
 """
 
 tags_metadata = [
     {
-        "name": "rules",
-        "description": "Fetch the rules of a server. This would be every cvar with the [FCVAR_NOTIFY](https://developer.valvesoftware.com/wiki/FCVAR_NOTIFY) flag.",
-    },
-    {
-        "name": "info",
-        "description": "Fetch information about a server."
-    },
-    {
-        "name": "players",
-        "description": "Fetch a list of players on a server."
+        "name": "server",
+        "description": "Get information about a server.",
     }
 ]
 
