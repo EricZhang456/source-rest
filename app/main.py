@@ -1,4 +1,3 @@
-from asyncio.exceptions import TimeoutError
 from socket import gaierror
 
 from fastapi import FastAPI
